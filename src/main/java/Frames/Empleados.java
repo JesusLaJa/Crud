@@ -6,7 +6,7 @@ package Frames;
 
 /**
  *
- * @author Jesus Lagunes
+ * @author Jesus Lagunes Jacome
  */
 public class Empleados {
 
