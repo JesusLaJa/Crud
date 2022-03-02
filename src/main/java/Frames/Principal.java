@@ -4,15 +4,11 @@
  */
 package Frames;
 
-import Frames.SpEmpleados;
-import Frames.Empleados;
 import Clases.Conectar;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -23,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
  * @author pc
  */
 public class Principal extends javax.swing.JFrame {
+
     /**
      * Creates new form Principal
      */
@@ -52,7 +49,7 @@ public class Principal extends javax.swing.JFrame {
     }
 
     public void mostrarDatos(String nombreApellidos) throws SQLException {
-        
+
         DefaultTableModel modelo = new DefaultTableModel();
 
         modelo.addColumn("ID");
@@ -60,43 +57,40 @@ public class Principal extends javax.swing.JFrame {
         modelo.addColumn("APELLIDO");
         modelo.addColumn("DIRECIIÓN");
         modelo.addColumn("TELEFONO");
-        
+
         tabla.setModel(modelo);
-        
-        
-        
+
         String datos[] = new String[5];
 
-        
         try {
             //Se prepara la llamada al SP
             CallableStatement myCall = con.prepareCall("{call USP_SELECCIONAR_EMPLEADOS()}");
-            
+
             //Ejecutamos la llamada al SP
             myCall.execute();
-            
+
             ResultSet rs = myCall.getResultSet();
-            
+
             while (rs.next()) {
                 datos[0] = rs.getString(1);
                 datos[1] = rs.getString(2);
                 datos[2] = rs.getString(3);
                 datos[3] = rs.getString(4);
                 datos[4] = rs.getString(5);
-                
+
                 modelo.addRow(datos);
             }
             tabla.setModel(modelo);
-            
-            } catch (SQLException e) {
-                //se muestra el mensaje de error 
-                System.err.println("Error en el llamado de la tabla" + e);
-                JOptionPane.showMessageDialog(null, "Error en el llenado de la tabla");
-                
-            }
-            
+
+        } catch (SQLException e) {
+            //se muestra el mensaje de error 
+            System.err.println("Error en el llamado de la tabla" + e);
+            JOptionPane.showMessageDialog(null, "Error en el llenado de la tabla");
+
         }
-    
+
+    }
+
     /*void mostrartabla(String valor) {
 
         DefaultTableModel modelo = new DefaultTableModel();
@@ -142,7 +136,6 @@ public class Principal extends javax.swing.JFrame {
         }
 
     }*/
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -374,39 +367,39 @@ public class Principal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     public void btnactualizarActionPerformed(java.awt.event.ActionEvent evt) {
-        
+
         try {
             //Preparamos la llamada al procedimiento
             CallableStatement myCall = con.prepareCall("{call USP_ACTUALIZAR_EMPLEADO(?,?,?,?,?)}");
-            
+
             //Asignamos el valor a los procedimientos
             myCall.setString("PID", txtid.getText());
             myCall.setString("PNOMBRE", txtnombre.getText());
             myCall.setString("PAPELLIDO", txtapellidos.getText());
             myCall.setString("PDIRECCION", txtdireccion.getText());
             myCall.setString("PTELEFONO", txttelefono.getText());
-            
+
             //ejecutamos la llamada al procedimiento almacenado     
             myCall.executeUpdate();
-            
+
             Integer id = myCall.getInt("PID");
-            
+
             //Le asignamos un valor a id
             txtid.setText(id.toString());
             //Mostramos un mensaje en caso de ser exitosa la ejecucion
             JOptionPane.showMessageDialog(null, "Datos Actualizados con exito!");
-            
+
             limpiar();
             mostrarDatos("");
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
             //Mostramos el mensaje de error
             System.out.println("Error: " + e.getMessage());
             JOptionPane.showMessageDialog(null, "Error al actualizar los datos");
         }
-    
-}
-       
+
+    }
+
     /*
     private void btnactualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnactualizarActionPerformed
 
@@ -438,13 +431,12 @@ public class Principal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnactualizarActionPerformed
     */
-    public void btnguardarActionPerformed(java.awt.event.ActionEvent evt) { 
-        
-        
+    public void btnguardarActionPerformed(java.awt.event.ActionEvent evt) {
+
         try {
             //Preparar la llamada
             CallableStatement myCall = con.prepareCall("{call USP_AGREGAR_EMPLEADOS (?,?,?,?,?)}");
-            
+
             //Asignamos valor a los parametros, deben de ser igual al numero de parametros que tiene el SP
             myCall.setString("PNOMBRE", txtnombre.getText());
             myCall.setString("PAPELLIDO", txtapellidos.getText());
@@ -452,30 +444,31 @@ public class Principal extends javax.swing.JFrame {
             myCall.setString("PTELEFONO", txttelefono.getText());
             //Se registra el parametro de salida
             myCall.registerOutParameter("PID", java.sql.Types.INTEGER);
-            
+
             //Ejecuta la llamada al SP
             myCall.execute();
             //myCall.executeUpdate();
-            
+
             Integer id = myCall.getInt("PID");
-            
+
             //int id = rs.getInt("PID");
-            if(id > 0 ){
+            if (id > 0) {
                 txtid.setText(id.toString());
                 JOptionPane.showMessageDialog(null, "Datos Guardados!");
-            }else {
+            } else {
                 JOptionPane.showMessageDialog(null, "Datos No Guardados!");
             }
-            
+
             limpiar();
             mostrarDatos("");
-        //En caso de que suceda algun error ejecutar catch
+            //En caso de que suceda algun error ejecutar catch
         } catch (SQLException e) {
             //Se muestra el mensaje de error
             System.err.println("Error al guardar" + e);
             JOptionPane.showMessageDialog(null, "Error al guardar los datos");
         }
     }
+
     /* 
     private void btnguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnguardarActionPerformed
        
@@ -515,7 +508,7 @@ public class Principal extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_tablaMouseClicked
-/*
+    /*
     private void popeliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_popeliminarActionPerformed
 
         try {
@@ -541,7 +534,7 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_popeliminarActionPerformed
 */
     public void popeliminarActionPerformed(java.awt.event.ActionEvent evt) {
-    
+
         try {
             //Preparamos la llamada al SP
             CallableStatement myCall = con.prepareCall("{call USP_ELIMINAR_EMPLEADOS(?)}");
@@ -549,29 +542,27 @@ public class Principal extends javax.swing.JFrame {
             myCall.setString("PID", txtid.getText());
             //ejecutamos la llamada al SP
             myCall.execute();
-            
-            
+
             Integer id = myCall.getInt("PID");
-            
+
             //ejecuto un if para en caso de que se cumpla la condicion se ejecute 
             if (id > 0) {
                 //mostramos le mensaje de empeado eliminado
                 JOptionPane.showMessageDialog(null, "Empleado Eliminado");
                 limpiar();
                 mostrarDatos("");
-            //ejecuto un else en caso de que no se cumpla la condicion 
+                //ejecuto un else en caso de que no se cumpla la condicion 
             } else {
                 JOptionPane.showMessageDialog(null, "No se a seleccionado fila");
 
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             //Mostramos el mesnaje de error 
             System.err.println("Error al eliminar" + e);
             JOptionPane.showMessageDialog(null, "Error al eliminar");
+        }
+
     }
-        
-        
-}
     private void txtbuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtbuscarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtbuscarActionPerformed
